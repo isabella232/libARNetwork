@@ -818,11 +818,20 @@ eARNETWORK_ERROR ARNETWORK_Manager_CreateIOBuffer (ARNETWORK_Manager_t *manager,
     {
         /** check parameters */
         /** -   all output buffer must have the ability to copy */
-        /** -   id must be within range [ackIdOffset;ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_MAX] */
+        /** -   id must be within range ]ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_MAX; ackIdOffset] */
         if ((outputParamArray[outputIndex].ID >= (manager->networkALManager->maxIds / 2)) ||
             (outputParamArray[outputIndex].ID <  ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_MAX) ||
             (outputParamArray[outputIndex].dataCopyMaxSize == 0))
         {
+            if (outputParamArray[outputIndex].dataCopyMaxSize == 0)
+            {
+                ARSAL_PRINT(ARSAL_PRINT_ERROR, ARNETWORK_MANAGER_TAG, "outputParamArray[%d].dataCopyMaxSize == 0", outputIndex);
+            }
+            else
+            {
+                ARSAL_PRINT(ARSAL_PRINT_ERROR, ARNETWORK_MANAGER_TAG, "outputParamArray[%d] has a bad ID (%d). The ID should be in the range : ]%d; %d]", outputIndex, outputParamArray[outputIndex].ID, ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_MAX, (manager->networkALManager->maxIds / 2));
+            }
+            
             error = ARNETWORK_ERROR_BAD_PARAMETER;
         }
 
