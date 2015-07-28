@@ -257,9 +257,14 @@ void* ARNETWORK_Receiver_ThreadRun (void *data)
                         error = ARNETWORK_IOBuffer_Lock(outBufferPtrTemp);
                         if(error == ARNETWORK_OK)
                         {
-                            if (ARNETWORK_IOBuffer_ShouldAcceptData (outBufferPtrTemp, frame.seq) > 0)
+                            int accept = ARNETWORK_IOBuffer_ShouldAcceptData (outBufferPtrTemp, frame.seq);
+                            if (accept > 0)
                             {
                                 error = ARNETWORK_Receiver_CopyDataRecv(receiverPtr, outBufferPtrTemp, &frame);
+                            }
+                            else if (accept == 0)
+                            {
+                                ARSAL_PRINT (ARSAL_PRINT_DEBUG, ARNETWORK_RECEIVER_TAG, "[%p] Received a retry for buffer %d", receiverPtr, outBufferPtrTemp->ID);
                             }
                             else
                             {
@@ -289,9 +294,14 @@ void* ARNETWORK_Receiver_ThreadRun (void *data)
                         error = ARNETWORK_IOBuffer_Lock(outBufferPtrTemp);
                         if(error == ARNETWORK_OK)
                         {
-                            if (ARNETWORK_IOBuffer_ShouldAcceptData (outBufferPtrTemp, frame.seq) > 0)
+                            int accept = ARNETWORK_IOBuffer_ShouldAcceptData (outBufferPtrTemp, frame.seq);
+                            if (accept > 0)
                             {
                                 error = ARNETWORK_Receiver_CopyDataRecv(receiverPtr, outBufferPtrTemp, &frame);
+                            }
+                            else if (accept == 0)
+                            {
+                                ARSAL_PRINT (ARSAL_PRINT_DEBUG, ARNETWORK_RECEIVER_TAG, "[%p] Received a retry for buffer %d", receiverPtr, outBufferPtrTemp->ID);
                             }
                             else
                             {
@@ -324,9 +334,14 @@ void* ARNETWORK_Receiver_ThreadRun (void *data)
                         if(error == ARNETWORK_OK)
                         {
                             /** OutBuffer->seqWaitAck used to save the last seq */
-                            if (ARNETWORK_IOBuffer_ShouldAcceptData (outBufferPtrTemp, frame.seq) > 0)
+                            int accept = ARNETWORK_IOBuffer_ShouldAcceptData (outBufferPtrTemp, frame.seq);
+                            if (accept > 0)
                             {
                                 error = ARNETWORK_Receiver_CopyDataRecv(receiverPtr, outBufferPtrTemp, &frame);
+                            }
+                            else if (accept == 0)
+                            {
+                                ARSAL_PRINT (ARSAL_PRINT_DEBUG, ARNETWORK_RECEIVER_TAG, "[%p] Received a retry for buffer %d", receiverPtr, outBufferPtrTemp->ID);
                             }
                             else
                             {
