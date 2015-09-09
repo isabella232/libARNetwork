@@ -420,6 +420,7 @@ void* ARNETWORK_Manager_ReceivingThreadRun (void *data)
 
 void ARNETWORK_Manager_Stop (ARNETWORK_Manager_t *manager)
 {
+    ARSAL_PRINT (ARSAL_PRINT_DEBUG, ARNETWORK_MANAGER_TAG, "");
     /** -- stop the threads of sending and reception -- */
 
     /** check paratemters */
@@ -1060,6 +1061,11 @@ void ARNETWORK_Manager_OnDisconnect (ARNETWORKAL_Manager_t *alManager, void *cus
     /* -- function called on disconnect -- */
 
     ARNETWORK_Manager_t *manager = (ARNETWORK_Manager_t *)customData;
+    
+    if (manager != NULL)
+    {
+        ARNETWORK_Manager_Stop (manager);
+    }
 
     if ((manager != NULL) && (alManager != NULL) && (manager->onDisconnect != NULL))
     {
