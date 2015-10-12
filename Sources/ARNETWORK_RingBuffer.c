@@ -79,6 +79,26 @@ static inline void ARNETWORK_RingBuffer_NormalizeIndexes(ARNETWORK_RingBuffer_t 
     /* No else: the Indexes are already normalized. */
 }
 
+/**
+ * @brief Return the number of free cell of the ring buffer
+ * @param ringBuffer the ring buffer which will give the number of its free cells
+ * @return number of free cell of the ring buffer 
+**/
+static inline int ARNETWORK_RingBuffer_GetFreeCellNumberUnlocked(const ARNETWORK_RingBuffer_t *ringBuffer)
+{
+    return ringBuffer->numberOfCell - ( (ringBuffer->indexInput - ringBuffer->indexOutput) / ringBuffer->cellSize );
+}
+
+/**
+ * @brief Check if the ring buffer is empty
+ * @param ringBuffer the ring buffer which will check if it is empty
+ * @return equal to 1 if the ring buffer is empty else 0
+**/
+static inline int ARNETWORK_RingBuffer_IsEmptyUnlocked(const ARNETWORK_RingBuffer_t *ringBuffer)
+{
+    return (ringBuffer->indexInput == ringBuffer->indexOutput) ? 1 : 0;
+}
+
 /*****************************************
  *
  *             implementation :
@@ -158,9 +178,9 @@ eARNETWORK_ERROR ARNETWORK_RingBuffer_PushBackWithSize(ARNETWORK_RingBuffer_t *r
     ARSAL_Mutex_Lock(&(ringBuffer->mutex));
 
     /* check if the has enough free cell or the buffer is overwriting */
-    if ((ARNETWORK_RingBuffer_GetFreeCellNumber(ringBuffer)) || (ringBuffer->isOverwriting))
+    if ((ARNETWORK_RingBuffer_GetFreeCellNumberUnlocked(ringBuffer)) || (ringBuffer->isOverwriting))
     {
-        if (!ARNETWORK_RingBuffer_GetFreeCellNumber(ringBuffer))
+        if (!ARNETWORK_RingBuffer_GetFreeCellNumberUnlocked(ringBuffer))
         {
             (ringBuffer->indexOutput) += ringBuffer->cellSize;
         }
@@ -207,7 +227,7 @@ eARNETWORK_ERROR ARNETWORK_RingBuffer_PopFrontWithSize(ARNETWORK_RingBuffer_t *r
 
     ARSAL_Mutex_Lock(&(ringBuffer->mutex));
 
-    if (!ARNETWORK_RingBuffer_IsEmpty(ringBuffer))
+    if (!ARNETWORK_RingBuffer_IsEmptyUnlocked(ringBuffer))
     {
         if(dataPop != NULL)
         {
@@ -242,7 +262,7 @@ eARNETWORK_ERROR ARNETWORK_RingBuffer_Front(ARNETWORK_RingBuffer_t *ringBuffer, 
     /* get the address of the front data */
     buffer = ringBuffer->dataBuffer + (ringBuffer->indexOutput % (ringBuffer->numberOfCell * ringBuffer->cellSize));
 
-    if( !ARNETWORK_RingBuffer_IsEmpty(ringBuffer) )
+    if( !ARNETWORK_RingBuffer_IsEmptyUnlocked(ringBuffer) )
     {
         memcpy(frontData, buffer, ringBuffer->cellSize);
     }
@@ -303,4 +323,31 @@ void ARNETWORK_RingBuffer_DataPrint(ARNETWORK_RingBuffer_t *ringBuffer)
     }
 
     ARSAL_Mutex_Unlock(&(ringBuffer->mutex));
+}
+
+int ARNETWORK_RingBuffer_GetFreeCellNumber(const ARNETWORK_RingBuffer_t *ringBuffer)
+{
+    int numberOfFreeCell = -1;
+    
+    ARSAL_Mutex_Lock(&(ringBuffer->mutex));
+    
+    numberOfFreeCell = ringBuffer->numberOfCell - ( (ringBuffer->indexInput - ringBuffer->indexOutput) / ringBuffer->cellSize );
+    
+    ARSAL_Mutex_Unlock(&(ringBuffer->mutex));
+    
+    return numberOfFreeCell;
+}
+
+
+int ARNETWORK_RingBuffer_IsEmpty(const ARNETWORK_RingBuffer_t *ringBuffer)
+{
+    int isEmpty = 0;
+    
+    ARSAL_Mutex_Lock(&(ringBuffer->mutex));
+    
+    isEmpty = (ringBuffer->indexInput == ringBuffer->indexOutput) ? 1 : 0;
+    
+    ARSAL_Mutex_Unlock(&(ringBuffer->mutex));
+    
+    return isEmpty;
 }
