@@ -202,7 +202,7 @@ void* ARNETWORK_Receiver_ThreadRun (void *data)
                     case ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_PING:
                         /* Ping, send the corresponding pong */
                     {
-                        ARNETWORK_Sender_SendPong (receiverPtr->senderPtr, frame.dataPtr, frame.size);
+                        ARNETWORK_Sender_SendPong (receiverPtr->senderPtr, frame.dataPtr, frame.size - offsetof(ARNETWORKAL_Frame_t, dataPtr));
                     }
                     break;
                     case ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_PONG:

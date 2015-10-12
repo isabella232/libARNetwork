@@ -746,6 +746,7 @@ eARNETWORK_ERROR ARNETWORK_Manager_CreateIOBuffer (ARNETWORK_Manager_t *manager,
     int indexAckOutput = 0;
     ARNETWORK_IOBufferParam_t paramNewACK;
     ARNETWORK_IOBufferParam_t paramPingBuffer;
+    ARNETWORK_IOBufferParam_t paramPongBuffer;
 
     /** Initialize the default parameters for the buffers of acknowledgement. */
     ARNETWORK_IOBufferParam_DefaultInit (&paramNewACK);
@@ -760,6 +761,11 @@ eARNETWORK_ERROR ARNETWORK_Manager_CreateIOBuffer (ARNETWORK_Manager_t *manager,
     paramPingBuffer.numberOfCell = 1;
     paramPingBuffer.dataCopyMaxSize = sizeof (struct timespec);
     paramPingBuffer.isOverwriting = 1;
+    ARNETWORK_IOBufferParam_DefaultInit (&paramPongBuffer);
+    paramPongBuffer.dataType = ARNETWORKAL_FRAME_TYPE_DATA;
+    paramPongBuffer.numberOfCell = 1;
+    paramPongBuffer.dataCopyMaxSize = 32; // The struct timespec can be greater than our own in the remote.
+    paramPongBuffer.isOverwriting = 1;
 
     /**
      *  For each output buffer a buffer of acknowledgement is add and referenced
@@ -790,8 +796,8 @@ eARNETWORK_ERROR ARNETWORK_Manager_CreateIOBuffer (ARNETWORK_Manager_t *manager,
     //  - ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_PONG
     if (error == ARNETWORK_OK)
     {
-        paramPingBuffer.ID = ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_PONG;
-        manager->internalInputBufferArray[inputIndex] = ARNETWORK_IOBuffer_New (&paramPingBuffer, 1);
+        paramPongBuffer.ID = ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_PONG;
+        manager->internalInputBufferArray[inputIndex] = ARNETWORK_IOBuffer_New (&paramPongBuffer, 1);
         if (manager->internalInputBufferArray[inputIndex] == NULL)
         {
             error = ARNETWORK_ERROR_MANAGER_NEW_IOBUFFER;
