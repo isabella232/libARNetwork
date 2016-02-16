@@ -301,8 +301,8 @@ void ARNETWORK_RingBuffer_DataPrint(ARNETWORK_RingBuffer_t *ringBuffer)
 
     /* local declarations */
     uint8_t *byteIterator = NULL;
-    int  cellIndex = 0;
-    int  byteIndex = 0;
+    unsigned int cellIndex = 0;
+    unsigned int byteIndex = 0;
 
     ARSAL_Mutex_Lock(&(ringBuffer->mutex));
 
@@ -325,7 +325,7 @@ void ARNETWORK_RingBuffer_DataPrint(ARNETWORK_RingBuffer_t *ringBuffer)
     ARSAL_Mutex_Unlock(&(ringBuffer->mutex));
 }
 
-int ARNETWORK_RingBuffer_GetFreeCellNumber(const ARNETWORK_RingBuffer_t *ringBuffer)
+int ARNETWORK_RingBuffer_GetFreeCellNumber(ARNETWORK_RingBuffer_t *ringBuffer)
 {
     int numberOfFreeCell = -1;
     
@@ -339,7 +339,7 @@ int ARNETWORK_RingBuffer_GetFreeCellNumber(const ARNETWORK_RingBuffer_t *ringBuf
 }
 
 
-int ARNETWORK_RingBuffer_IsEmpty(const ARNETWORK_RingBuffer_t *ringBuffer)
+int ARNETWORK_RingBuffer_IsEmpty(ARNETWORK_RingBuffer_t *ringBuffer)
 {
     int isEmpty = 0;
     

@@ -184,7 +184,7 @@ eARNETWORK_ERROR ARNETWORK_IOBuffer_Flush (ARNETWORK_IOBuffer_t *IOBuffer);
  * @param[in] doDataCopy indocator to copy the data in the IOBuffer
  * @return error eARNETWORK_ERROR
  */
-eARNETWORK_ERROR ARNETWORK_IOBuffer_AddData(ARNETWORK_IOBuffer_t *IOBuffer, uint8_t *data, int dataSize, void *customData, ARNETWORK_Manager_Callback_t callback, int doDataCopy);
+eARNETWORK_ERROR ARNETWORK_IOBuffer_AddData(ARNETWORK_IOBuffer_t *IOBuffer, uint8_t *data, size_t dataSize, void *customData, ARNETWORK_Manager_Callback_t callback, int doDataCopy);
 
 /**
  * @brief Asks an IOBuffer if it should accept a data with the given sequence number
@@ -205,7 +205,7 @@ int ARNETWORK_IOBuffer_ShouldAcceptData (ARNETWORK_IOBuffer_t *IOBuffer, uint8_t
  * @param[out] readSize pointer to store the size of the data read ; can be equal to NULL
  * @return error eARNETWORK_ERROR type
  */
-eARNETWORK_ERROR ARNETWORK_IOBuffer_ReadData(ARNETWORK_IOBuffer_t *IOBuffer, uint8_t *data, int dataLimitSize, int *readSize);
+eARNETWORK_ERROR ARNETWORK_IOBuffer_ReadData(ARNETWORK_IOBuffer_t *IOBuffer, uint8_t *data, size_t dataLimitSize, int *readSize);
 
 /**
  * @brief Gets the estimated miss percentage of the buffer

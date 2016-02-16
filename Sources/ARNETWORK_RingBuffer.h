@@ -140,14 +140,14 @@ eARNETWORK_ERROR ARNETWORK_RingBuffer_PopFrontWithSize(ARNETWORK_RingBuffer_t *r
  * @param ringBuffer the ring buffer which will give the number of its free cells
  * @return number of free cell of the ring buffer 
 **/
-int ARNETWORK_RingBuffer_GetFreeCellNumber(const ARNETWORK_RingBuffer_t *ringBuffer);
+int ARNETWORK_RingBuffer_GetFreeCellNumber(ARNETWORK_RingBuffer_t *ringBuffer);
 
 /**
  * @brief Check if the ring buffer is empty
  * @param ringBuffer the ring buffer which will check if it is empty
  * @return equal to 1 if the ring buffer is empty else 0
 **/
-int ARNETWORK_RingBuffer_IsEmpty(const ARNETWORK_RingBuffer_t *ringBuffer);
+int ARNETWORK_RingBuffer_IsEmpty(ARNETWORK_RingBuffer_t *ringBuffer);
 
 /**
  * @brief Return a pointer on the front data

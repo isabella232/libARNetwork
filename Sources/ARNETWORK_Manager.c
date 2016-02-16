@@ -913,7 +913,7 @@ eARNETWORK_ERROR ARNETWORK_Manager_CreateIOBuffer (ARNETWORK_Manager_t *manager,
         }
 
         /* Check final buffer size. */
-        if (inputParamArray[inputIndex].dataCopyMaxSize > manager->networkALManager->maxBufferSize)
+        if (inputParamArray[inputIndex].dataCopyMaxSize > 0 && ((uint32_t)inputParamArray[inputIndex].dataCopyMaxSize > manager->networkALManager->maxBufferSize))
         {
             ARSAL_PRINT(ARSAL_PRINT_ERROR, ARNETWORK_MANAGER_TAG, "Final dataCopyMaxSize is higher than tha maximum allowed data size (%d).", manager->networkALManager->maxBufferSize);
             error = ARNETWORK_ERROR_BAD_PARAMETER;
