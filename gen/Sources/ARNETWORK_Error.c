@@ -108,7 +108,6 @@ const char* ARNETWORK_Error_ToString (eARNETWORK_ERROR error)
         return "Bad frame content on network";
         break;
     default:
-        return "Unknown value";
         break;
     }
     return "Unknown value";
