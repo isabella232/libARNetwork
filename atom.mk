@@ -10,7 +10,7 @@ LOCAL_MODULE_FILENAME := libarnetwork.so
 
 LOCAL_LIBRARIES := libARSAL libARNetworkAL
 
-LOCAL_CONFIG_FILES := Build/Config.in
+LOCAL_CONFIG_FILES := Config.in
 $(call load-config)
 
 LOCAL_C_INCLUDES := \
