@@ -10,12 +10,15 @@ LOCAL_MODULE_FILENAME := libarnetwork.so
 
 LOCAL_LIBRARIES := libARSAL libARNetworkAL
 
-LOCAL_CONFIG_FILES := Build/Config.in
+LOCAL_CONFIG_FILES := Config.in
 $(call load-config)
 
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/Includes \
 	$(LOCAL_PATH)/Sources
+
+LOCAL_CFLAGS := \
+	-DHAVE_CONFIG_H
 
 LOCAL_SRC_FILES := \
 	Sources/ARNETWORK_IOBuffer.c \

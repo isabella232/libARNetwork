@@ -74,6 +74,6 @@ typedef enum
  *
  * @note User should NEVER try to modify a returned string
  */
-char* ARNETWORK_Error_ToString (eARNETWORK_ERROR error);
+const char* ARNETWORK_Error_ToString (eARNETWORK_ERROR error);
 
 #endif /* _ARNETWORK_ERROR_H_ */

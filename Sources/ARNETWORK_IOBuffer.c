@@ -405,7 +405,7 @@ eARNETWORK_ERROR ARNETWORK_IOBuffer_Flush(ARNETWORK_IOBuffer_t *IOBuffer)
     return error;
 }
 
-eARNETWORK_ERROR ARNETWORK_IOBuffer_AddData(ARNETWORK_IOBuffer_t *IOBuffer, uint8_t *data, int dataSize, void *customData, ARNETWORK_Manager_Callback_t callback, int doDataCopy)
+eARNETWORK_ERROR ARNETWORK_IOBuffer_AddData(ARNETWORK_IOBuffer_t *IOBuffer, uint8_t *data, size_t dataSize, void *customData, ARNETWORK_Manager_Callback_t callback, int doDataCopy)
 {
     /** -- Add data in a IOBuffer -- */
 
@@ -491,7 +491,7 @@ int ARNETWORK_IOBuffer_ShouldAcceptData (ARNETWORK_IOBuffer_t *IOBuffer, uint8_t
     return retVal;
 }
 
-eARNETWORK_ERROR ARNETWORK_IOBuffer_ReadData(ARNETWORK_IOBuffer_t *IOBuffer, uint8_t *data, int dataLimitSize, int *readSize)
+eARNETWORK_ERROR ARNETWORK_IOBuffer_ReadData(ARNETWORK_IOBuffer_t *IOBuffer, uint8_t *data, size_t dataLimitSize, int *readSize)
 {
     /** -- read data received in a IOBuffer -- */
 

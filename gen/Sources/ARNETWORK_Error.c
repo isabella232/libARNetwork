@@ -40,7 +40,7 @@
 
 #include <libARNetwork/ARNETWORK_Error.h>
 
-char* ARNETWORK_Error_ToString (eARNETWORK_ERROR error)
+const char* ARNETWORK_Error_ToString (eARNETWORK_ERROR error)
 {
     switch (error)
     {
@@ -108,7 +108,6 @@ char* ARNETWORK_Error_ToString (eARNETWORK_ERROR error)
         return "Bad frame content on network";
         break;
     default:
-        return "Unknown value";
         break;
     }
     return "Unknown value";
