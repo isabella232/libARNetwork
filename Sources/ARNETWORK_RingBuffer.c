@@ -116,28 +116,29 @@ ARNETWORK_RingBuffer_t* ARNETWORK_RingBuffer_NewWithOverwriting(unsigned int num
     /* -- Create a new ring buffer -- */
 
     /* local declarations */
-    ARNETWORK_RingBuffer_t* ringBuffer =  malloc( sizeof(ARNETWORK_RingBuffer_t) );
+    int err = 0;
+    ARNETWORK_RingBuffer_t* ringBuffer = calloc(1, sizeof(ARNETWORK_RingBuffer_t));
+    if (ringBuffer == NULL)
+        return NULL;
 
-    if(ringBuffer)
-    {
-        ringBuffer->numberOfCell = numberOfCell;
-        ringBuffer->cellSize = cellSize;
-        ringBuffer->indexInput = 0;
-        ringBuffer->indexOutput = 0;
-        ringBuffer->isOverwriting = isOverwriting;
-        ARSAL_Mutex_Init( &(ringBuffer->mutex) );
-        ringBuffer->dataBuffer = malloc( cellSize * numberOfCell );
+    ringBuffer->numberOfCell = numberOfCell;
+    ringBuffer->cellSize = cellSize;
+    ringBuffer->indexInput = 0;
+    ringBuffer->indexOutput = 0;
+    ringBuffer->isOverwriting = isOverwriting;
+    err = ARSAL_Mutex_Init(&ringBuffer->mutex);
+    if (err != 0)
+        goto error;
 
-        if( ringBuffer->dataBuffer == NULL)
-        {
-            /* dataBuffer is not successfully allocated */
-            ARNETWORK_RingBuffer_Delete(&ringBuffer);
-        }
-        /* No else: dataBuffer is successfully allocated */
-    }
-    /* No else: the ringBuffer is not successfully allocated; ringBuffer = NULL. */
+    ringBuffer->dataBuffer = malloc(cellSize * numberOfCell);
+    if (ringBuffer->dataBuffer == NULL)
+        goto error;
 
     return ringBuffer;
+
+error:
+    ARNETWORK_RingBuffer_Delete(&ringBuffer);
+    return NULL;
 }
 
 void ARNETWORK_RingBuffer_Delete(ARNETWORK_RingBuffer_t **ringBuffer)
