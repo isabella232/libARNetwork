@@ -727,8 +727,14 @@ void ARNETWORK_Sender_GotPingAck (ARNETWORK_Sender_t *senderPtr, struct timespec
 void ARNETWORK_Sender_SendPong (ARNETWORK_Sender_t *senderPtr, uint8_t *data, int dataSize)
 {
     ARNETWORK_IOBuffer_t *inputBufferPtrTemp;
+    eARNETWORK_ERROR err = ARNETWORK_OK;
     inputBufferPtrTemp = senderPtr->inputBufferPtrMap[ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_PONG];
-    ARNETWORK_IOBuffer_Lock (inputBufferPtrTemp);
+    err = ARNETWORK_IOBuffer_Lock (inputBufferPtrTemp);
+    if (err != ARNETWORK_OK) {
+        ARSAL_PRINT (ARSAL_PRINT_ERROR, ARNETWORK_SENDER_TAG, "ARNETWORK_IOBuffer_Lock() failed; error: %s", ARNETWORK_Error_ToString (err));
+        return;
+    }
+
     ARNETWORK_IOBuffer_AddData (inputBufferPtrTemp, data, dataSize, NULL, NULL, 1);
     ARNETWORK_IOBuffer_Unlock (inputBufferPtrTemp);
 }
