@@ -118,77 +118,83 @@ ARNETWORK_IOBuffer_t* ARNETWORK_IOBuffer_New(const ARNETWORK_IOBufferParam_t *pa
     /** local declarations */
     ARNETWORK_IOBuffer_t *IOBuffer = NULL;
     eARNETWORK_ERROR error = ARNETWORK_OK;
+    int res = 0;
+
+    if (param == NULL)
+        return NULL;
 
     /** Create the input or output buffer in accordance with parameters set in the ARNETWORK_IOBufferParam_t */
-    IOBuffer = malloc( sizeof(ARNETWORK_IOBuffer_t) );
+    IOBuffer = calloc(1, sizeof(ARNETWORK_IOBuffer_t));
+    if (IOBuffer == NULL)
+        return NULL;
 
-    if(IOBuffer != NULL)
-    {
-        /** Initialize to default values */
-        IOBuffer->dataDescriptorRBuffer = NULL;
-        IOBuffer->dataCopyRBuffer = NULL;
-        ARSAL_Mutex_Init(&(IOBuffer->mutex));
-        ARSAL_Sem_Init(&(IOBuffer->outputSem), 0, 0);
+    /** Initialize to default values */
+    IOBuffer->dataDescriptorRBuffer = NULL;
+    IOBuffer->dataCopyRBuffer = NULL;
+    res = ARSAL_Mutex_Init(&(IOBuffer->mutex));
+    if (res != 0) {
+        error = ARNETWORK_ERROR_MUTEX;
+        goto error;
+    }
+    res = ARSAL_Sem_Init(&(IOBuffer->outputSem), 0, 0);
+    if (res < 0) {
+        error = ARNETWORK_ERROR_SEMAPHORE;
+        goto error;
+    }
 
-        if((isInternal == 1) ||
-           (ARNETWORK_IOBufferParam_Check(param)))
-        {
-            IOBuffer->ID = param->ID;
-            IOBuffer->dataType = param->dataType;
-            IOBuffer->sendingWaitTimeMs = param->sendingWaitTimeMs;
-            IOBuffer->ackTimeoutMs = param->ackTimeoutMs;
-
-            if(param->numberOfRetry >= 0)
-            {
-                IOBuffer->numberOfRetry = param->numberOfRetry;
-            }
-            else
-            {
-                /** if numberOfRetry equal 0 disable the retry function with -1 value */
-                IOBuffer->numberOfRetry = -1;
-            }
-
-            IOBuffer->isWaitAck = 0;
-            IOBuffer->seq = 0;
-            IOBuffer->alreadyHadData = 0;
-            IOBuffer->nbPackets = 0;
-            IOBuffer->nbNetwork = 0;
-            IOBuffer->waitTimeCount = param->sendingWaitTimeMs;
-            IOBuffer->ackWaitTimeCount = param->ackTimeoutMs;
-            IOBuffer->retryCount = 0;
-
-            /** Create the RingBuffer for the information of the data*/
-            IOBuffer->dataDescriptorRBuffer = ARNETWORK_RingBuffer_NewWithOverwriting(param->numberOfCell, sizeof(ARNETWORK_DataDescriptor_t), param->isOverwriting);
-            if(IOBuffer->dataDescriptorRBuffer == NULL)
-            {
-                error = ARNETWORK_ERROR_NEW_RINGBUFFER;
-            }
-
-            /** if the parameters have a size of data copy */
-            if( (error == ARNETWORK_OK) && (param->dataCopyMaxSize > 0) )
-            {
-                /** Create the RingBuffer for the copy of the data*/
-                IOBuffer->dataCopyRBuffer = ARNETWORK_RingBuffer_NewWithOverwriting(param->numberOfCell, param->dataCopyMaxSize, param->isOverwriting);
-                if(IOBuffer->dataCopyRBuffer == NULL)
-                {
-                    error = ARNETWORK_ERROR_NEW_BUFFER;
-                }
-            }
-        }
-        else
-        {
+    if (!isInternal) {
+        res = ARNETWORK_IOBufferParam_Check(param);
+        if (res < 0) {
             error = ARNETWORK_ERROR_BAD_PARAMETER;
+            goto error;
         }
+    }
 
-        if(error != ARNETWORK_OK)
-        {
-            /** delete the inOutput buffer if an error occurred */
-            ARSAL_PRINT(ARSAL_PRINT_ERROR, ARNETWORK_IOBUFFER_TAG,"error: %s", ARNETWORK_Error_ToString (error));
-            ARNETWORK_IOBuffer_Delete(&IOBuffer);
+    IOBuffer->ID = param->ID;
+    IOBuffer->dataType = param->dataType;
+    IOBuffer->sendingWaitTimeMs = param->sendingWaitTimeMs;
+    IOBuffer->ackTimeoutMs = param->ackTimeoutMs;
+
+    if (param->numberOfRetry >= 0) {
+        IOBuffer->numberOfRetry = param->numberOfRetry;
+    } else {
+        /** if numberOfRetry equal 0 disable the retry function with -1 value */
+        IOBuffer->numberOfRetry = -1;
+    }
+
+    IOBuffer->isWaitAck = 0;
+    IOBuffer->seq = 0;
+    IOBuffer->alreadyHadData = 0;
+    IOBuffer->nbPackets = 0;
+    IOBuffer->nbNetwork = 0;
+    IOBuffer->waitTimeCount = param->sendingWaitTimeMs;
+    IOBuffer->ackWaitTimeCount = param->ackTimeoutMs;
+    IOBuffer->retryCount = 0;
+
+    /** Create the RingBuffer for the information of the data*/
+    IOBuffer->dataDescriptorRBuffer = ARNETWORK_RingBuffer_NewWithOverwriting(param->numberOfCell, sizeof(ARNETWORK_DataDescriptor_t), param->isOverwriting);
+    if (IOBuffer->dataDescriptorRBuffer == NULL) {
+        error = ARNETWORK_ERROR_NEW_RINGBUFFER;
+        goto error;
+    }
+
+    /** if the parameters have a size of data copy */
+    if (param->dataCopyMaxSize > 0) {
+        /** Create the RingBuffer for the copy of the data*/
+        IOBuffer->dataCopyRBuffer = ARNETWORK_RingBuffer_NewWithOverwriting(param->numberOfCell, param->dataCopyMaxSize, param->isOverwriting);
+        if (IOBuffer->dataCopyRBuffer == NULL) {
+            error = ARNETWORK_ERROR_NEW_BUFFER;
+            goto error;
         }
     }
 
     return IOBuffer;
+
+error:
+    /** delete the inOutput buffer if an error occurred */
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, ARNETWORK_IOBUFFER_TAG,"error: %s", ARNETWORK_Error_ToString (error));
+    ARNETWORK_IOBuffer_Delete(&IOBuffer);
+    return NULL;
 }
 
 void ARNETWORK_IOBuffer_Delete(ARNETWORK_IOBuffer_t **IOBuffer)
