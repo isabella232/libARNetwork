@@ -340,8 +340,6 @@ void* ARNETWORK_Sender_ThreadRun (void* data)
                 } else {
                     ARSAL_PRINT (ARSAL_PRINT_ERROR, ARNETWORK_SENDER_TAG, "ARNETWORK_IOBuffer_Lock() failed; error: %s", ARNETWORK_Error_ToString (error));
                 }
-                ARNETWORK_IOBuffer_AddData (inputBufferPtrTemp, (uint8_t *)&now, sizeof (now), NULL, NULL, 1);
-                ARNETWORK_IOBuffer_Unlock (inputBufferPtrTemp);
                 senderPtr->pingStartTime.tv_sec = now.tv_sec;
                 senderPtr->pingStartTime.tv_nsec = now.tv_nsec;
                 senderPtr->isPingRunning = 1;
