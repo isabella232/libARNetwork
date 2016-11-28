@@ -420,7 +420,7 @@ void* ARNETWORK_Manager_ReceivingThreadRun (void *data)
 
 void ARNETWORK_Manager_Stop (ARNETWORK_Manager_t *manager)
 {
-    ARSAL_PRINT (ARSAL_PRINT_DEBUG, ARNETWORK_MANAGER_TAG, "");
+    ARSAL_PRINT (ARSAL_PRINT_DEBUG, ARNETWORK_MANAGER_TAG, "%s", "");
     /** -- stop the threads of sending and reception -- */
 
     /** check paratemters */
