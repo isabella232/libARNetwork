@@ -283,7 +283,7 @@ void ARNETWORK_RingBuffer_Print(ARNETWORK_RingBuffer_t *ringBuffer)
 
     ARSAL_Mutex_Lock(&(ringBuffer->mutex));
 
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, ARNETWORK_RINGBUFFER_TAG," pointer dataBuffer :%d \n",ringBuffer->dataBuffer);
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, ARNETWORK_RINGBUFFER_TAG," pointer dataBuffer :%p \n",ringBuffer->dataBuffer);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, ARNETWORK_RINGBUFFER_TAG," numberOfCell :%d \n",ringBuffer->numberOfCell);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, ARNETWORK_RINGBUFFER_TAG," cellSize :%d \n",ringBuffer->cellSize);
     ARSAL_PRINT(ARSAL_PRINT_WARNING, ARNETWORK_RINGBUFFER_TAG," indexOutput :%d \n",ringBuffer->indexOutput);
