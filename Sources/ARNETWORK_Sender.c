@@ -333,9 +333,13 @@ void* ARNETWORK_Sender_ThreadRun (void* data)
                     senderPtr->lastPingValue = -1;
                 }
                 inputBufferPtrTemp = senderPtr->inputBufferPtrMap[ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_PING];
-                ARNETWORK_IOBuffer_Lock (inputBufferPtrTemp);
-                ARNETWORK_IOBuffer_AddData (inputBufferPtrTemp, (uint8_t *)&now, sizeof (now), NULL, NULL, 1);
-                ARNETWORK_IOBuffer_Unlock (inputBufferPtrTemp);
+                error = ARNETWORK_IOBuffer_Lock (inputBufferPtrTemp);
+                if (error == ARNETWORK_OK) {
+                    ARNETWORK_IOBuffer_AddData (inputBufferPtrTemp, (uint8_t *)&now, sizeof (now), NULL, NULL, 1);
+                    ARNETWORK_IOBuffer_Unlock (inputBufferPtrTemp);
+                } else {
+                    ARSAL_PRINT (ARSAL_PRINT_ERROR, ARNETWORK_SENDER_TAG, "ARNETWORK_IOBuffer_Lock() failed; error: %s", ARNETWORK_Error_ToString (error));
+                }
                 senderPtr->pingStartTime.tv_sec = now.tv_sec;
                 senderPtr->pingStartTime.tv_nsec = now.tv_nsec;
                 senderPtr->isPingRunning = 1;
@@ -727,8 +731,14 @@ void ARNETWORK_Sender_GotPingAck (ARNETWORK_Sender_t *senderPtr, struct timespec
 void ARNETWORK_Sender_SendPong (ARNETWORK_Sender_t *senderPtr, uint8_t *data, int dataSize)
 {
     ARNETWORK_IOBuffer_t *inputBufferPtrTemp;
+    eARNETWORK_ERROR err = ARNETWORK_OK;
     inputBufferPtrTemp = senderPtr->inputBufferPtrMap[ARNETWORK_MANAGER_INTERNAL_BUFFER_ID_PONG];
-    ARNETWORK_IOBuffer_Lock (inputBufferPtrTemp);
+    err = ARNETWORK_IOBuffer_Lock (inputBufferPtrTemp);
+    if (err != ARNETWORK_OK) {
+        ARSAL_PRINT (ARSAL_PRINT_ERROR, ARNETWORK_SENDER_TAG, "ARNETWORK_IOBuffer_Lock() failed; error: %s", ARNETWORK_Error_ToString (err));
+        return;
+    }
+
     ARNETWORK_IOBuffer_AddData (inputBufferPtrTemp, data, dataSize, NULL, NULL, 1);
     ARNETWORK_IOBuffer_Unlock (inputBufferPtrTemp);
 }
