@@ -437,7 +437,7 @@ eARNETWORK_ERROR ARNETWORK_Receiver_WriteEventFd(ARNETWORK_Receiver_t *receiverP
 	int ret;
 	do {
 		ret = write(receiverPtr->inputEventFd, &value, sizeof(value));
-	} while (ret < 0 & errno == EINTR);
+	} while ((ret < 0) && (errno == EINTR));
 	if (ret < 0) {
 		ret = errno;
 		ARSAL_PRINT (ARSAL_PRINT_ERROR, ARNETWORK_RECEIVER_TAG, "[%p] Error: can't write to eventfd %s", receiverPtr, strerror(ret));
@@ -458,7 +458,7 @@ eARNETWORK_ERROR ARNETWORK_Receiver_ReadEventFd(ARNETWORK_Receiver_t *receiverPt
 	int ret;
 	do {
 		ret = read(receiverPtr->inputEventFd, value, sizeof(*value));
-	} while (ret < 0 & errno == EINTR);
+	} while ((ret < 0) && (errno == EINTR));
 	if (ret < 0) {
 		ret = errno;
 		ARSAL_PRINT (ARSAL_PRINT_ERROR, ARNETWORK_RECEIVER_TAG, "[%p] Error: can't read from eventfd %s", receiverPtr, strerror(ret));

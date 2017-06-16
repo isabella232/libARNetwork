@@ -589,7 +589,13 @@ eARNETWORK_ERROR ARNETWORK_Sender_AddToBuffer (ARNETWORK_Sender_t *senderPtr, AR
 
     if (error == ARNETWORK_OK)
     {
-        ARNETWORKAL_Frame_t frame = { 0 };
+        ARNETWORKAL_Frame_t frame = {
+            .type = 0,
+            .id = 0,
+            .seq = 0,
+            .size = 0,
+            .dataPtr = NULL,
+        };
         if (isRetry == 0)
         {
             inputBufferPtr->seq++;
